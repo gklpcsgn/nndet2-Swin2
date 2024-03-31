@@ -61,6 +61,7 @@ def do_train(args, cfg):
     model = instantiate(cfg.model)
     logger = logging.getLogger("detectron2")
     logger.info("Model:\n{}".format(model))
+    print('DEVICE:', cfg.train.device)
     model.to(cfg.train.device)
 
     cfg.optimizer.params.model = model
@@ -99,6 +100,9 @@ def do_train(args, cfg):
         start_iter = trainer.iter + 1
     else:
         start_iter = 0
+
+    # dataloader and model are not on the same device in the beginning
+    # 
     trainer.train(start_iter, cfg.train.max_iter)
 
 
@@ -119,11 +123,18 @@ def main(args):
 
 if __name__ == "__main__":
     args = default_argument_parser().parse_args()
+    # Change this to:
+        # args.num_gpus,
+        # num_machines=args.num_machines,
+        # machine_rank=args.machine_rank,
+        # dist_url=args.dist_url,
+        # args=(args,),
+    # but this is my setup for now
     launch(
         main,
-        args.num_gpus,
-        num_machines=args.num_machines,
-        machine_rank=args.machine_rank,
-        dist_url=args.dist_url,
+        1,
+        num_machines=1,
+        machine_rank=1,
+        dist_url="auto",
         args=(args,),
     )
