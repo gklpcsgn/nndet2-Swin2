@@ -1,5 +1,5 @@
 from ..common.coco_schedule import lr_multiplier_1x as lr_multiplier                                                 
-from ..common.data.coco import dataloader
+from ..common.data.mydata import dataloader
 from ..common.models.retinanet import model
 from ..common.train import train
 
